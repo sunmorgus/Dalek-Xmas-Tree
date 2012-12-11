@@ -5,7 +5,12 @@ What would the holidays be without a little EXTERMINATE!!!
 
 This repo will hold the script for running your own Dalek Christmas Tree, using python and a Rapsberry Pi! More information about this project can be found here: http://dev.csbctech.com/dalek/wordpress
 
-Before getting started, there are some dependencies you need to install on your Rapsberry Pi (mostly to get sound working, plus adding the CWiid package for Wii Remote control):
+At a minimum, use of this script (without modification) requires the following items:
+	1. A Raspberry Pi
+	2. A USB Bluetooth Dongle
+	3. A Wii Remote
+
+Before getting started, there are some dependencies you need to install on your Rapsberry Pi (mostly to get sound working, plus adding the CWiid package for Wii Remote control). The instructions below are for the official Raspbian release, usage elsewhere...YMMV:
 
 	sudo apt-get install ca-certificates git binutils mpg123 python-cwiid
 	
