@@ -39,3 +39,7 @@ I've included some sound files in the snd directory; feel free to delete them an
 	    files.append("riley_doctor_who.mp3")
 	    files.append("riley_kill_the_doctor.mp3")
 	    files.append("riley_tick_tock.mp3")
+
+NOTE: If you are running this script via ssh, it's helpful to launch it in a screen first, so the script will continue to run after you've closed the ssh connection. After starting the script, just hit ctrl-A + D to detach from the screen, then you can exit the ssh connection and the script will continue on. More info on using screen can be found here https://help.ubuntu.com/community/Screen.
+
+I have plans to convert this script to run as a daemon, which will hopefully negate the need to use screen.
