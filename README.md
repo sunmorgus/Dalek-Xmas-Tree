@@ -3,7 +3,7 @@ Dalek Xmas Tree
 
 What would the holidays be without a little EXTERMINATE!!!
 
-This repo will hold the script for running your own Dalek Christmas Tree, using python and a Rapsberry Pi!
+This repo will hold the script for running your own Dalek Christmas Tree, using python and a Rapsberry Pi! More information about this project can be found here: http://dev.csbctech.com/dalek/wordpress
 
 Before getting started, there are some dependencies you need to install on your Rapsberry Pi (mostly to get sound working, plus adding the CWiid package for Wii Remote control):
 
@@ -20,11 +20,11 @@ Add the sound driver to /etc/modules
 	
 Reboot the Pi, then just download and run the dalek.py script:
 
-	git clone http://
+	git clone git://github.com/sunmorgus/Dalek-Xmas-Tree.git
 	chmod u+x dalek.py
 	./dalek.py
 	
-I've included some sound files in the snd directory; feel free to delete them and add your own. If you do, just update the files array with the appropriate file names:
+I've included some sound files in the snd directory; feel free to delete them and add your own. If you do, just update the files array with the appropriate file names. Also, make sure you update the directory variable if you didn't check out to the pi user's home directory:
 
 	def mainLoop():
 	    wiimote = None
