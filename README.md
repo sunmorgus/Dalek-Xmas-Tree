@@ -20,7 +20,7 @@ Add the sound driver to /etc/modules
 	
 Reboot the Pi, then just download and run the dalek.py script:
 
-	git clone http://
+	git clone git://github.com/sunmorgus/Dalek-Xmas-Tree.git
 	chmod u+x dalek.py
 	./dalek.py
 	
