@@ -14,7 +14,7 @@ Before getting started, there are some dependencies you need to install on your 
 
 	sudo apt-get update
 	sudo apt-get dist-upgrade
-	sudo apt-get install ca-certificates git binutils python-cwiid python-pyaudio python-pymad
+	sudo apt-get install ca-certificates git binutils bluetooth python-cwiid python-pyaudio python-pymad
 	
 Then update the Pi's firmware:
 
