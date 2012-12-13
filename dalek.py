@@ -17,26 +17,13 @@
 #-- imports
 import cwiid
 import time
-import os
+import pyaudio
+import mad
+import audioop
 from subprocess import call
 from random import randrange
 
 #-- end imports
-
-#-- setup global variables
-#// CWiid Wiimote Object
-global wiimote
-
-#// directory for sound files
-global directory
-
-#// array of sound files to play
-global files
-
-#// status message
-global status
-
-#-- end global variables
 
 #-- utility functions
 
@@ -46,26 +33,23 @@ def connectWiiRemote():
     attempts = 1
     
     while not wiimote:
-        os.system("clear")
+        call("clear")
         status = "Waiting for Wii Remote to Connect..."
         print status
         try:
             wiimote = cwiid.Wiimote()
             # turn on wiimote led, to indicate that we've started up correctly
-            #print "Wii Remote Connected!"
             wiimote.led = 1
             
             # set the report mode to button, so we can capture button events
             wiimote.rpt_mode = cwiid.RPT_BTN
-            beep(2)
+            playAudio("Beep", 2, wiimote)
             
             return wiimote
         except RuntimeError:
             if attempts > 5:
-                #print "Cannot create connection to Wiimote"
                 break
-            #print "Error creating connection to wiimote"
-            #print "Attempt(s): {0}".format(attempts)
+            
             attempts += 1
 #// end Wii Remote Connect Function
 
@@ -73,51 +57,92 @@ def connectWiiRemote():
 #// This function is disabled for now...it was
 #// too annoying! lol
 def beep(loop):
-    i = loop
+    i = loop #when ready to re-enable, set i = 0
+    mf = []
     while i < loop:
-        call(["mpg123", "-q", "snd/beep.mp3"])
+        mf.append(mad.MadFile(directory + "beep.mp3"))
         i += 1
+        
+    return mf
 #// end beep function
 
-#// Play Audio Function
-def playAudio():
-    #print "Playing Audio File"
-    
+#// Get Audio Function
+def getAudioFile():    
     l = len(files)
     i = randrange(l + 1) # add one here when adding combined audio files
-    #print "Length: {0} - i: {1}".format(l, i)
+    mf = []
     
     if i <= (l - 1):
-        #print "Single"
-        call(["mpg123", "-q", files[i]])
+        mf.append(mad.MadFile(directory + files[i]))
     else: #combined audio files
-        #print "Combined"
-        call(["mpg123", "-q", files[4], files[0], files[0], files[0]])
-#// end play function
+        mf.append(mad.MadFile(directory + files[4]))
+        mf.append(mad.MadFile(directory + files[0]))
+        mf.append(mad.MadFile(directory + files[0]))
+        mf.append(mad.MadFile(directory + files[0]))
+    
+    return mf
+    
+#// end get audio function
+
+#// Plays the given audio file using pyaudio
+#// Expects array of pymad File Objects
+def playAudio(snd = "Dalek", loop = 0, wiimote = None):
+    if snd == "Dalek":
+        madFiles = getAudioFile()
+    else:
+        madFiles = beep(loop)
+        if wiimote != None:
+            rpt = 1
+            while rpt <= loop:
+                wiimote.rumble = 0
+                for i in range(0, 3):
+                    time.sleep(0.1)
+                    wiimote.rumble = (i % 2)
+                rpt += 1
+        
+    for mf in madFiles:
+        p = pyaudio.PyAudio()
+        
+        #CHUNK = 1024
+        
+        # open stream
+        stream = p.open(format = p.get_format_from_width(pyaudio.paInt32),
+                        channels = 2,
+                        rate = mf.samplerate(),
+                        output = True)
+        
+        # read data
+        data = mf.read()
+        
+        # play stream
+        while data != None:
+            stream.write(data)
+            rms = audioop.rms(data, 2)
+#            if rms > 11500:
+#                print "ON"
+#            else:
+#                print "OFF"
+            data = mf.read()
+        
+        stream.close()
+        p.terminate()
+        
+        call("clear")
+        print "OFF"
+    
+#// end play audio
 
 #-- end utility functions
-
 
 #-- main loop function
 
 def mainLoop():
     wiimote = None
-    directory = "/home/pi/snd/"
+    
+    playAudio("Beep", 1, wiimote)
 
-    files = []
-    files.append("riley_exterminate.mp3")
-    files.append("nat_exterminate.mp3")
-    files.append("aiden_sonic_screwdriver.mp3")
-    files.append("nat_doctor_who.mp3")
-    files.append("riley_doctor_detected.mp3")
-    files.append("riley_doctor_who.mp3")
-    files.append("riley_kill_the_doctor.mp3")
-    files.append("riley_tick_tock.mp3")
-    
-    beep(1)
-    
     while True:
-        os.system("clear")
+        call("clear")
         if wiimote == None:
             wiimote = connectWiiRemote()
         else:
@@ -132,21 +157,47 @@ def mainLoop():
 
             if buttons == cwiid.BTN_HOME:
                 #print "Shutting Wii Remote Off!"
+                playAudio("Beep", 3, wiimote)
                 wiimote.close()
                 wiimote = None
-                beep(3)
             
             if buttons == (cwiid.BTN_B + cwiid.BTN_HOME):
                 #print "Closing Script!"
+                playAudio("Beep", 4, wiimote)
                 wiimote.close()
                 wiimote = None
-                beep(4)
                 quit()
-            
-        time.sleep(0.2)
+        try:
+            time.sleep(0.2)
+        except KeyboardInterrupt:
+            exit()
         
 #-- end main loop
 
+#-- setup global variables
+
+#// directory for sound files
+global directory
+
+#// array of sound files to play
+global files
+
+#// status message
+global status
+
+directory = "snd/"
+
+files = []
+files.append("riley_exterminate.mp3")
+files.append("nat_exterminate.mp3")
+files.append("aiden_sonic_screwdriver.mp3")
+files.append("nat_doctor_who.mp3")
+files.append("riley_doctor_detected.mp3")
+files.append("riley_doctor_who.mp3")
+files.append("riley_kill_the_doctor.mp3")
+files.append("riley_tick_tock.mp3")
+
+#-- end global variables
 
 #-- Start Main Loop
 
