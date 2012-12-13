@@ -12,7 +12,9 @@ At a minimum, use of this script (without modification) requires the following i
 
 Before getting started, there are some dependencies you need to install on your Rapsberry Pi (mostly to get sound working, plus adding the CWiid package for Wii Remote control). The instructions below are for the official Raspbian release, usage elsewhere...YMMV:
 
-	sudo apt-get install ca-certificates git binutils mpg123 python-cwiid
+	sudo apt-get update
+	sudo apt-get dist-upgrade
+	sudo apt-get install ca-certificates git binutils python-cwiid python-pyaudio python-pymad
 	
 Then update the Pi's firmware:
 
