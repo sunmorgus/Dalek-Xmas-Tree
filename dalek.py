@@ -75,7 +75,7 @@ def connectWiiRemote():
 def beep(loop):
     i = loop
     while i < loop:
-        call(["mpg123", "-q", "beep.mp3"])
+        call(["mpg123", "-q", "snd/beep.mp3"])
         i += 1
 #// end beep function
 
@@ -113,8 +113,6 @@ def mainLoop():
     files.append("riley_doctor_who.mp3")
     files.append("riley_kill_the_doctor.mp3")
     files.append("riley_tick_tock.mp3")
-    
-    #run(webApp, host='localhost', port=8080)
     
     beep(1)
     
